@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Departemen;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class DepartemenController extends Controller
@@ -13,6 +14,8 @@ class DepartemenController extends Controller
     public function index()
     {
         //
+        $departemen = Departemen::all();
+        return view('departemen.index',['departemen'=>$departemen]);
     }
 
     /**
@@ -21,6 +24,7 @@ class DepartemenController extends Controller
     public function create()
     {
         //
+        return view('departemen.create');
     }
 
     /**
@@ -29,6 +33,14 @@ class DepartemenController extends Controller
     public function store(Request $request)
     {
         //
+        $request->validate([
+            'nama_departemen' => 'required',
+        ]);
+        Departemen::create([
+            'nama_departemen' =>$request->nama_departemen,
+        ]);
+
+        return redirect('departemen')->with('success','Departemen Berhasil Ditambahkan');
     }
 
     /**
@@ -42,24 +54,37 @@ class DepartemenController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Departemen $departemen)
+    public function edit($id)
     {
         //
+        $data = Departemen::where('kodedepartemen',$id)->first();
+        return view('departemen.edit')->with('data',$data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Departemen $departemen)
+    public function update(Request $request,$id)
     {
         //
+        $request->validate([
+            'nama_departemen' => 'required',
+        ]);
+        $data = ([
+            'nama_departemen' =>$request->nama_departemen,
+        ]);
+
+        Departemen::where('kodedepartemen',$id)->update($data);
+        return redirect('departemen')->with('success','Departemen Berhasil Dirubah');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Departemen $departemen)
+    public function destroy($id)
     {
         //
+        Departemen::where('kodedepartemen',$id)->delete();
+        return redirect('departemen')->with('success','Departemen Berhasil Dihapus');
     }
-}
+} 
